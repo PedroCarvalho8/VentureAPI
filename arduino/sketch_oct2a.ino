@@ -1,19 +1,21 @@
 #include <WiFi.h>
-#include <AsyncTCP.h>
+#include <HTTPClient.h>
 #include <ESPAsyncWebServer.h>
+#include <ArduinoJson.h>
 
-int pin1_1 = 16;
-int pin1_2 = 17;
-int pin1_3 = 18;
-int pin1_4 = 19;
 
-int pin2_1 = 20;
-int pin2_2 = 21;
-int pin2_3 = 22;
-int pin2_4 = 23;
+int pin1_1 = 13;
+int pin1_2 = 12;
+int pin1_3 = 14;
+int pin1_4 = 27;
+
+int pin2_1 = 26;
+int pin2_2 = 25;
+int pin2_3 = 33;
+int pin2_4 = 32;
 
 const char* ssid = "Venture";
-const char* password = "321654";
+const char* password = "123456789";
 
 AsyncWebServer server(80);
 
@@ -42,8 +44,10 @@ void setup() {
   pinMode(pin2_3, OUTPUT);
   pinMode(pin2_4, OUTPUT);
 
+  Serial.begin(115200);
+  WiFi.mode(WIFI_MODE_AP);
   WiFi.softAP(ssid, password);
-  
+
   server.on("/frente", HTTP_GET, [](AsyncWebServerRequest * request) {
     alternar_frente();
     request->send(200, "text/plain", "Alternar andando para frente.");
@@ -55,7 +59,7 @@ void setup() {
   });
 
   server.begin();
-  
+
 }
 
 void loop() {}
