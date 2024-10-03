@@ -42,10 +42,8 @@ void setup() {
   pinMode(pin2_3, OUTPUT);
   pinMode(pin2_4, OUTPUT);
 
-
-  server.begin();
-  WiFi.begin(ssid, password);
-
+  WiFi.softAP(ssid, password);
+  
   server.on("/frente", HTTP_GET, [](AsyncWebServerRequest * request) {
     alternar_frente();
     request->send(200, "text/plain", "Alternar andando para frente.");
@@ -56,6 +54,8 @@ void setup() {
     request->send(200, "text/plain", "Alternar andando para trás.");
   });
 
+  server.begin();
+  
 }
 
 void loop() {}
