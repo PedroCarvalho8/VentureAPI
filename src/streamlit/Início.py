@@ -1,9 +1,13 @@
 import streamlit as st
+from src.streamlit.sidebar_custom import custom_sidebar
+
+custom_sidebar()
+
+image_path = 'images/logo.png'
+st.image(image_path, use_column_width='auto')
 
 st.markdown('''
 # Sistema de Requisição e Coleta de Itens com Visão Computacional
-
-![Sistema de Requisição e Coleta](https://via.placeholder.com/800x200.png?text=Sistema+de+Requisi%C3%A7%C3%A3o+e+Coleta)
 
 ## 📖 Descrição do Projeto
 
@@ -13,7 +17,7 @@ Este projeto é um **Sistema de Requisição e Coleta de Itens** que utiliza um 
 
 - **Python**: A linguagem principal para desenvolvimento.
 - **Streamlit**: Framework para criar aplicações web interativas.
-- **OpenCV**: Biblioteca para processamento de imagens e visão computacional.
+- **OpenCV**: Biblioteca para processamento de images e visão computacional.
 - **YOLO (You Only Look Once)**: Algoritmo de detecção de objetos em tempo real.
 - **SQLite**: Banco de dados local para gerenciamento de dados.
 

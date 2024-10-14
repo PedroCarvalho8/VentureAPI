@@ -2,11 +2,15 @@ import streamlit as st
 import time
 from PIL import Image
 import os
+from src.streamlit.sidebar_custom import custom_sidebar
+
+
+custom_sidebar()
+
 
 
 frame_dir = "temp_frames"
 
-st.set_page_config(page_title="Visualização", page_icon="📊")
 st.title("Sistema de Requisição e Coleta de Itens - Feed de Câmera")
 
 frame_placeholder = st.empty()

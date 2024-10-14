@@ -3,21 +3,23 @@ import streamlit as st
 import json
 import pandas as pd
 from src.repositories.db_interaction import *
+from src.streamlit.sidebar_custom import custom_sidebar
 
 
-st.set_page_config(
-    page_title="Solicitação",
-    page_icon="📥",
-)
+custom_sidebar()
 
+image_path = 'images/logo.png'
+icon_path = 'images/icon.png'
 
 if "itens_solicitados" not in st.session_state:
     st.session_state.itens_solicitados = []
 
 st.title("Sistema para solicitação de produtos")
 
+
 @st.fragment(run_every="1s")
 def atualizar_solicitacoes():
+    st.logo(image_path, size="large", link=None, icon_image=icon_path)
 
     items_detectados = get_msg(table='detected_items')
 
@@ -48,7 +50,6 @@ def atualizar_solicitacoes():
     else:
         st.write("Nenhum produto solicitado até o momento.")
 
-
 atualizar_solicitacoes()
 
 
@@ -64,6 +65,7 @@ def solicitar_item(itens: str):
         st.session_state.itens_solicitados.append(msg)
 
         send_msg(msg=msg, table='items_to_detect')
+
 
 itens_a_solicitar = st.multiselect("Escolha os produtos", options=["Fosforo", "Toddynho", "Pedro"])
 st.button("Solicitar", on_click=solicitar_item, args=(itens_a_solicitar,))
