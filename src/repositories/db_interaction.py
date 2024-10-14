@@ -1,6 +1,7 @@
 import sqlite3
 
-def initialize_db(tables: tuple[str]):
+
+def initialize_db(tables: tuple):
     conn = sqlite3.connect('storage.db')
     c = conn.cursor()
 
@@ -35,7 +36,6 @@ def send_msg(msg, table):
     c.execute(f"INSERT INTO {table} (message) VALUES (?)", (msg,))
     conn.commit()
     conn.close()
-
 
 
 def get_msg(table):

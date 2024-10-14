@@ -2,13 +2,19 @@ import multiprocessing as mp
 import os
 from src.detection.visaocomputacional import detection
 from src.repositories.db_interaction import *
+import shutil
 
 
 def run_streamlit_server():
+    frame_dir = "temp_frames"
 
-    initialize_db(('detected_items',))
+    if os.path.exists(frame_dir):
+        shutil.rmtree(frame_dir)
+        os.makedirs(frame_dir)
 
-    os.system("streamlit run src/streamlit/server.py")
+    initialize_db(('detected_items', 'items_to_detect'))
+
+    os.system("streamlit run src/streamlit/Início.py")
 
 
 if __name__ == "__main__":

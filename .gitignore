@@ -2,3 +2,4 @@ storage.db
 .venv/
 __pycache__/
 .idea/
+temp_frames/
