@@ -7,8 +7,6 @@ from src.streamlit.sidebar_custom import custom_sidebar
 
 custom_sidebar()
 
-
-
 frame_dir = "temp_frames"
 
 st.title("Visualização da câmera")

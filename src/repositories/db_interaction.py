@@ -71,7 +71,7 @@ def get_msg(table):
     return rows
 
 
-def  insert_item_solicitacoes(dados):
+def insert_item_solicitacoes(dados):
     conn = sqlite3.connect('storage.db')
     c = conn.cursor()
 
@@ -117,6 +117,15 @@ def item_encontrado(class_name: str):
     c.execute('''
     UPDATE solicitacoes SET status = ? WHERE id = ?
     ''', ('Encontrado', idx_min))
+
+    conn.commit()
+    conn.close()
+
+def apagar_historico():
+    conn = sqlite3.connect('storage.db')
+    c = conn.cursor()
+
+    c.execute('''DELETE FROM solicitacoes''')
 
     conn.commit()
     conn.close()
