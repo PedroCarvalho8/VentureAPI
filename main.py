@@ -14,7 +14,7 @@ def run_streamlit_server():
 
     initialize_db(('detected_items', 'items_to_detect'))
 
-    os.system("streamlit run src/streamlit/Início.py")
+    os.system("streamlit run src/streamlit/🏠_Início.py")
 
 
 if __name__ == "__main__":

@@ -14,7 +14,7 @@ icon_path = 'images/icon.png'
 if "itens_solicitados" not in st.session_state:
     st.session_state.itens_solicitados = []
 
-st.title("Sistema para solicitação de produtos")
+st.title("Solicitação de produtos")
 
 
 @st.fragment(run_every="1s")
@@ -43,10 +43,10 @@ def atualizar_solicitacoes():
                     st.session_state.itens_solicitados.pop(idx)
 
     if st.session_state.itens_solicitados:
-        st.write("Produtos solicidatos")
-        itens_solicitados_df = pd.DataFrame(st.session_state.itens_solicitados, columns=['Item'])
-        itens_solicitados_df['Item'] = itens_solicitados_df['Item'].apply(lambda x: json.loads(x)['class_name'])
-        st.dataframe(itens_solicitados_df)
+        st.write("Produtos solicitados")
+        itens_solicitados_df = pd.DataFrame(st.session_state.itens_solicitados, columns=['Produto'])
+        itens_solicitados_df['Produto'] = itens_solicitados_df['Produto'].apply(lambda x: json.loads(x)['class_name'])
+        st.dataframe(itens_solicitados_df, hide_index=True, use_container_width=True)
     else:
         st.write("Nenhum produto solicitado até o momento.")
 
@@ -55,17 +55,22 @@ atualizar_solicitacoes()
 
 def solicitar_item(itens: str):
     for item in itens:
-        msg = json.dumps(
-            {
+        msg = {
                 'class_name': item,
+                'status': "Requisitado",
                 'timestamp': str(datetime.now()),
             }
-        )
-
-        st.session_state.itens_solicitados.append(msg)
-
-        send_msg(msg=msg, table='items_to_detect')
 
 
-itens_a_solicitar = st.multiselect("Escolha os produtos", options=["Fosforo", "Toddynho", "Pedro"])
-st.button("Solicitar", on_click=solicitar_item, args=(itens_a_solicitar,))
+        st.session_state.itens_solicitados.append(json.dumps(msg))
+
+        send_msg(msg=json.dumps(msg), table='items_to_detect')
+
+        insert_item_solicitacoes(msg)
+
+
+itens_a_solicitar = st.multiselect(
+    "Escolha os produtos",
+    options=["Colgate", "Creme De Leite", "Fosforo", "Gelatina", "Polpa De Tomate", "Sabonete", "Toddynho"]
+)
+st.button("Solicitar", on_click=solicitar_item, args=(itens_a_solicitar,), use_container_width=True)

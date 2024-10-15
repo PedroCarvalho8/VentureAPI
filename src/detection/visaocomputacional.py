@@ -3,10 +3,12 @@ import json
 import os
 from ultralytics import YOLO
 from collections import defaultdict
-from src.repositories.db_interaction import send_msg, get_msg
+from src.repositories.db_interaction import *
 
 def detection():
     model = YOLO('src/models/best.pt')
+    model_classes = model.names
+    print(model_classes)
     model.predict(source=0, show=False, conf=0.4, verbose=False, stream=True)
     cap = cv2.VideoCapture(0)
     object_counts = defaultdict(int)
@@ -54,6 +56,7 @@ def detection():
                         if itens_solicitados and idxs_to_remove:
                             for idx in sorted(set(idxs_to_remove), reverse=True):
                                 if 0 <= idx < len(itens_solicitados):
+                                    item_encontrado(json.loads(itens_solicitados[idx][1]).get('class_name'))
                                     send_msg(
                                         json.dumps({
                                             'class_name': json.loads(itens_solicitados[idx][1]).get('class_name').upper(),

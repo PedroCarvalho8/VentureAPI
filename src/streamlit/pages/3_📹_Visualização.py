@@ -11,7 +11,7 @@ custom_sidebar()
 
 frame_dir = "temp_frames"
 
-st.title("Sistema de Requisição e Coleta de Itens - Feed de Câmera")
+st.title("Visualização da câmera")
 
 frame_placeholder = st.empty()
 
@@ -34,7 +34,8 @@ else:
 
                 if len(frames) > 100:
                     try:
-                        os.remove(os.path.join(frame_dir, frames[0]))
+                        for i in range(50):
+                            os.remove(os.path.join(frame_dir, frames[i]))
                     except FileNotFoundError:
                         pass
 
