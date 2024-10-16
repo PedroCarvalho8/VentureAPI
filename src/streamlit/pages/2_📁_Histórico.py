@@ -1,22 +1,17 @@
 import time
-
 import streamlit as st
 import pandas as pd
 from src.streamlit.sidebar_custom import custom_sidebar
 from src.repositories.db_interaction import *
 from streamlit_extras.metric_cards import style_metric_cards
-from streamlit_theme import st_theme
-from streamlit_extras.customize_running import center_running
-import json
+from src.streamlit.theme import theme
 
+from streamlit_theme import st_theme
 
 custom_sidebar()
 
 if 'theme' not in st.session_state:
-    st_theme(key='theme')
-
-center_running()
-time.sleep(0.1)
+    st.session_state.theme = theme()
 
 st.title("Histórico de solicitações")
 
@@ -44,7 +39,7 @@ col1.dataframe(dados_df, hide_index=True, use_container_width=True)
 
 col2_1, col2_2 = col2.columns(2)
 
-tema = json.loads(st.session_state.theme)
+tema = st.session_state.theme
 
 backgroun_color = tema.get('backgroundColor')
 border_color = tema.get('secondaryBackgroundColor')
