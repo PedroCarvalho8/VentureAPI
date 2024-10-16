@@ -31,7 +31,7 @@ def atualizar_solicitacoes():
             class_list = [json.loads(i).get('class_name').upper() for i in st.session_state.itens_solicitados]
 
             if detected_class_name in class_list:
-                st.success(f"O item solicitado '{detected_class_name}' foi encontrado!")
+                st.toast(f"O item solicitado '{detected_class_name}' foi encontrado!", icon="✅")
                 idx_to_remove = [i for i, c in enumerate(class_list) if c == detected_class_name]
                 idxs_to_remove.extend(idx_to_remove)
 
@@ -74,3 +74,13 @@ itens_a_solicitar = st.multiselect(
     options=["Colgate", "Creme De Leite", "Fosforo", "Gelatina", "Polpa De Tomate", "Sabonete", "Toddynho"]
 )
 st.button("Solicitar", on_click=solicitar_item, args=(itens_a_solicitar,), use_container_width=True)
+
+
+def concluir_item(item):
+    msg = {
+        'class_name': item,
+        'status': "Requisitado",
+        'timestamp': str(datetime.now()),
+    }
+
+    send_msg(msg=json.dumps(msg), table='detected_items')

@@ -6,7 +6,10 @@ from src.repositories.db_interaction import *
 from streamlit_extras.metric_cards import style_metric_cards
 from src.streamlit.theme import theme
 
-from streamlit_theme import st_theme
+
+def baixar_histórico(dataframe: pd.DataFrame):
+    return dataframe.to_csv()
+
 
 custom_sidebar()
 
@@ -18,6 +21,7 @@ st.title("Histórico de solicitações")
 dados = get_items_solicitacoes()
 
 dados_df = pd.DataFrame(dados, columns=["Id", "Produto", "Status"])
+data_to_download = dados_df.copy()
 
 requisitados = dados_df.query('Status == "Requisitado"')
 encontrados = dados_df.query('Status == "Encontrado"')
@@ -58,3 +62,10 @@ with col2.popover("Apagar histórico", use_container_width=True):
     validacao = st.text_input("Digite 'APAGAR' para apagar o histórico").upper()
     disable = False if validacao == "APAGAR" else True
     st.button("Apagar", disabled=disable, on_click=apagar_historico)
+
+col2.download_button(
+    label="Baixar histórico",
+    data=baixar_histórico(data_to_download),
+    file_name="historico_solicitacoes.csv",
+    use_container_width=True
+)
