@@ -1,9 +1,13 @@
+import time
+
 import cv2
 import json
 import os
 from ultralytics import YOLO
 from collections import defaultdict
 from src.repositories.db_interaction import *
+from src.repositories.arduino_interaction import movimentacao, Movimentacao
+
 
 def detection():
     model = YOLO('src/models/Challenge_SPI.pt')
@@ -33,43 +37,65 @@ def detection():
                 for i in itens_recebidos:
                     itens_solicitados.append(i)
 
-            results = model(frame)
+            for item in itens_solicitados:
 
-            for result in results:
-                for box in result.boxes:
-                    class_name = result.names[int(box.cls)]
-                    object_counts[class_name] += 1
-                    total_objects_detected += 1
+                item_status = False
 
-                    if itens_solicitados:
-                        idxs_to_remove = []
+                start_time = time.time()
 
-                        detected_class_name = str(class_name).upper()
-                        class_list = [json.loads(i[1]).get('class_name').upper() for i in itens_solicitados]
+                while not item_status:
 
-                        if detected_class_name in class_list:
-                            idx_to_remove = [i for i, c in enumerate(class_list) if c == detected_class_name]
-                            idxs_to_remove.extend(idx_to_remove)
+                    results = model(frame)
 
-                        idxs_to_remove = [idx for idx in idxs_to_remove if idx < len(itens_solicitados)]
+                    movimentacao.andar(Movimentacao.Direcoes.FRENTE)
 
-                        if itens_solicitados and idxs_to_remove:
-                            for idx in sorted(set(idxs_to_remove), reverse=True):
-                                if 0 <= idx < len(itens_solicitados):
-                                    item_encontrado(json.loads(itens_solicitados[idx][1]).get('class_name'))
-                                    send_msg(
-                                        json.dumps({
-                                            'class_name': json.loads(itens_solicitados[idx][1]).get('class_name').upper(),
-                                            'object_count': object_counts[class_name],
-                                        }),
-                                        table='detected_items'
-                                    )
-                                    itens_solicitados.pop(idx)
 
-                    x1, y1, x2, y2 = map(int, box.xyxy[0])
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                    cv2.putText(frame, f'{class_name} {object_counts[class_name]}',
-                                (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+                    for result in results:
+                        for box in result.boxes:
+                            class_name = result.names[int(box.cls)]
+                            object_counts[class_name] += 1
+                            total_objects_detected += 1
+
+                            if itens_solicitados:
+                                idxs_to_remove = []
+
+                                detected_class_name = str(class_name).upper()
+                                class_list = [json.loads(i[1]).get('class_name').upper() for i in itens_solicitados]
+
+                                if detected_class_name in class_list:
+                                    idx_to_remove = [i for i, c in enumerate(class_list) if c == detected_class_name]
+                                    idxs_to_remove.extend(idx_to_remove)
+
+                                idxs_to_remove = [idx for idx in idxs_to_remove if idx < len(itens_solicitados)]
+
+                                if itens_solicitados and idxs_to_remove:
+                                    for idx in sorted(set(idxs_to_remove), reverse=True):
+                                        if 0 <= idx < len(itens_solicitados):
+                                            item_status = True
+                                            item_encontrado(json.loads(itens_solicitados[idx][1]).get('class_name'))
+                                            send_msg(
+                                                json.dumps({
+                                                    'class_name': json.loads(itens_solicitados[idx][1]).get('class_name').upper(),
+                                                    'object_count': object_counts[class_name],
+                                                }),
+                                                table='detected_items'
+                                            )
+                                            itens_solicitados.pop(idx)
+
+                            x1, y1, x2, y2 = map(int, box.xyxy[0])
+                            cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                            cv2.putText(frame, f'{class_name} {object_counts[class_name]}',
+                                        (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+
+                movimentacao.andar(Movimentacao.Direcoes.TRAS)
+
+                time.sleep(elapsed_time)
+
+                movimentacao.parar()
 
             cv2.imshow("YOLOv8 Detection", frame)
 
