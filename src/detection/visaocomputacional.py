@@ -6,10 +6,10 @@ from collections import defaultdict
 from src.repositories.db_interaction import *
 
 def detection():
-    model = YOLO('src/models/best.pt')
+    model = YOLO('src/models/Challenge_SPI.pt')
     model_classes = model.names
     print(model_classes)
-    model.predict(source=0, show=False, conf=0.4, verbose=False, stream=True)
+    model.predict(source=0, show=False, conf=0.7, verbose=False, stream=True)
     cap = cv2.VideoCapture(0)
     object_counts = defaultdict(int)
     total_objects_detected = 0
